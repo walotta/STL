@@ -6,10 +6,10 @@
 #include <deque>
 #include <random>
 
-#include "class-integer.hpp"
-#include "class-matrix.hpp"
-#include "class-bint.hpp"
-#include "deque.hpp"
+#include "../class-integer.hpp"
+#include "../class-matrix.hpp"
+#include "../class-bint.hpp"
+#include "../../deque.hpp"
 
 std::default_random_engine randnum(time(NULL));
 
@@ -120,7 +120,6 @@ bool iteratorTest() {
 
     auto ansIter = ans.begin() + ans.size() / 2;
     auto myIter  = deq.begin() + deq.size() / 2;
-
     // iter++, iter--
     for (int i = 0; i < MAX_N; i++) {
         switch(randnum() % 2) {

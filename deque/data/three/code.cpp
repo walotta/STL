@@ -1,4 +1,4 @@
-#include "deque.hpp"
+#include "../../deque.hpp"
 
 #include <ctime>
 #include <iostream>
@@ -1510,7 +1510,7 @@ int main() {
 	puts("");
 #ifdef __CORRECT_TEST
 	puts("---------------------------------------------------------------------------");
-	try{
+	/*try{
 		puts("Test Zone A: Correctness Testing...");
 		int n = sizeof(TEST_A) / sizeof(CheckerPair);
 		for (int i = 0; i < n; i++) {
@@ -1524,7 +1524,18 @@ int main() {
 		}
 	} catch(...) {
 		puts("Unknown Error Occured");
-	}
+	}*/
+    puts("Test Zone A: Correctness Testing...");
+    int n = sizeof(TEST_A) / sizeof(CheckerPair);
+    for (int i = 0; i < n; i++) {
+        printf("Test %d: %-59s", i + 1, TEST_A[i].first);
+        std::pair<bool, double> result = TEST_A[i].second();
+        if (result.first) {
+            puts("PASSED");
+        } else {
+            puts("FAILED");
+        }
+    }
 	puts("---------------------------------------------------------------------------");
 #ifdef __SPEED_TEST
 	puts("");

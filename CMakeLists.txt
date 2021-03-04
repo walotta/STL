@@ -3,4 +3,7 @@ project(STL)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(STL main.cpp)
+add_executable(STL
+        deque/data/three/code.cpp
+        #main.cpp
+        deque/deque.hpp)
