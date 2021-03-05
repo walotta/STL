@@ -121,7 +121,7 @@ bool iteratorTest() {
     auto ansIter = ans.begin() + ans.size() / 2;
     auto myIter  = deq.begin() + deq.size() / 2;
     // iter++, iter--
-    for (int i = 0; i < MAX_N; i++) {
+     for (int i = 0; i < MAX_N; i++) {
         switch(randnum() % 2) {
             case 0: ansIter++; myIter++;
                     break;
