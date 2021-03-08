@@ -1,6 +1,6 @@
 import os
 
-DataName = ['one', 'two', 'three', 'four', 'five']
+DataName = ['one', 'two', 'three', 'four', 'five', 'six']
 STLName = ['deque', 'map', 'priority_queue', 'vector']
 print(' deque: 1\n map: 2\n priority_queue: 3\n vector: 4')
 testName = STLName[int(input('enter your number of STL: '))-1]

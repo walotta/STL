@@ -9,13 +9,12 @@
 #define Min_size 850
 namespace sjtu
 {
-
+    int memcheck=0;
     template<class T>
     class deque
     {
     private:
         class node;
-
         class _pair
         {
         public:
@@ -118,6 +117,7 @@ namespace sjtu
             {
                 for(int i=0; i<amount; i++)
                 {
+                    memcheck--;
                     delete storage[i];
                 }
             }
@@ -131,6 +131,7 @@ namespace sjtu
                 amount=other.amount;
                 for(int i=0; i<amount; i++)
                 {
+                    memcheck++;
                     storage[i]=new T(*(other.storage[i]));
                 }
                 for(int i=amount; i<Size_of_block; i++)
@@ -171,6 +172,7 @@ namespace sjtu
 
             _pair remove(int number)
             {
+                memcheck--;
                 delete storage[number];
                 for(int i=number; i<amount-1; i++)
                 {
@@ -237,6 +239,7 @@ namespace sjtu
                         storage[i]=storage[i-1];
                     }
                     amount++;
+                    memcheck++;
                     storage[number]=new T(value);
                     return _pair(this, number);
                 }
@@ -255,6 +258,7 @@ namespace sjtu
                 end=o->end;
                 for(int i=0; i<o->amount; i++)
                 {
+                    memcheck++;
                     storage[i]=new T(*(o->storage[i]));
                 }
                 for(int i=amount; i<Size_of_block; i++)
@@ -301,6 +305,7 @@ namespace sjtu
         {
             node *it=other.head;
             node *write=head;
+            delete write->next;
             while(it->next!=other.tail)
             {
                 write->next=new node;

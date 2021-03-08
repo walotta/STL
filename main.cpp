@@ -12,35 +12,63 @@ Yours Sincerely. Rabbit.
 #include <vector>
 #include <deque>
 #include "deque/deque.hpp"
+#include <cmath>
 
+class T{
+private:
+    int x;
+public:
+    T(int x):x(x){}
+    int num()const {return x;}
+    void change(int y){
+        x = y;
+    }
+};
+bool operator == (const T &a, const T &b){
+    return a.num() == b.num();
+}
+bool operator != (const T &a, const T &b){
+    return a.num() != b.num();
+}
 long long randNum(long long x,long long maxNum)
 {
     x = (x * 10007) % maxNum;
     return x + 1;
 }
-const size_t N = 10005LL;
-
 void error()
 {
     std::cout << "Error, mismatch found." << std::endl;
     exit(0);
 }
 
-
-int main()
-{
-    sjtu::deque<int> a;
-    auto it=a.begin();
-    for(int i=0;i<100;i++)
+const size_t N = 10005LL;
+int main(){
+    srand(time(NULL));
+    puts("test start:");
     {
-        a.insert(it,i);
-        it++;
+        std::cout << "Test 4 : Test for copy constructor and operator=...";
+        sjtu::deque<long long> *pInt;
+        pInt = new sjtu::deque<long long>;
+        for (long long i = 0; i < N; ++i) {
+            pInt -> push_back(i);
+        }
+        sjtu::deque<long long> &dInt = *pInt;
+        sjtu::deque<long long> dualInt(dInt);
+        sjtu::deque<long long> dualInt_oper;
+        dualInt_oper = dInt;
+        for (long long i = 0; i < N; ++i)
+        {
+            if (dualInt[i] != dInt[i] || dualInt_oper[i] != dInt[i])
+                error();
+        }
+        dualInt_oper = dualInt_oper;
+        delete pInt;
+        for (long long i = 0; i < N; ++i)
+        {
+            if (dualInt_oper[i] != dualInt[i])
+                error();
+        }
+        std::cout << "Correct." << std::endl;
     }
-    for(auto it:a)std::cout<<it<<' ';std::cout<<std::endl;
-    for(int i=0;i<100;i++)
-    {
-        a.erase(a.end()-1-5);
-        for(auto it:a)std::cout<<it<<' ';std::cout<<std::endl;
-    }
-    return 0;
+    std::cout<<sjtu::memcheck<<std::endl;
 }
