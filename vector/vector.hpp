@@ -304,7 +304,6 @@ namespace sjtu {
             _build(n+1);
             _dataEnd=(other._dataEnd-other._Begin)+_Begin;
             //memcpy(_Begin,other._Begin,(n+1)*sizeof(T));
-            //todo
             for(int i=0;i<other._dataEnd-other._Begin+1;i++)
             {
                 (_Begin[i])=new T(*(other._Begin[i]));
@@ -535,7 +534,7 @@ namespace sjtu {
             }
         }
         /**
-         * todo
+         *
          * adds an element to the end.
          */
         void push_back(const T &value) {
@@ -548,7 +547,7 @@ namespace sjtu {
             *_dataEnd=new T(value);
         }
         /**
-         * todo
+         *
          * remove the last element from the end.
          * throw container_is_empty if size() == 0
          */
