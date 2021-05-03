@@ -1,74 +1,101 @@
-//Provided by desire2020/Steve Lu
-
-/***********************************************************************
-Hint: This test case almost completely tests the correctness of your deque.
-So if all tests are passed, feel free to enhance your performance! :)
-Yours Sincerely. Rabbit.
-***********************************************************************/
-#include "deque/data/class-integer.hpp"
-#include "deque/data/class-matrix.hpp"
-#include "deque/data/class-bint.hpp"
+#include "map/map.hpp"
 #include <iostream>
-#include <vector>
-#include <deque>
-#include "deque/deque.hpp"
-#include <cmath>
+#include <cassert>
+#include <string>
 
-class T{
-private:
-    int x;
+typedef int Integer;
+
+class Compare {
 public:
-    T(int x):x(x){}
-    int num()const {return x;}
-    void change(int y){
-        x = y;
+    bool operator () (const Integer &lhs, const Integer &rhs) const {
+        return lhs< rhs;
     }
 };
-bool operator == (const T &a, const T &b){
-    return a.num() == b.num();
-}
-bool operator != (const T &a, const T &b){
-    return a.num() != b.num();
-}
-long long randNum(long long x,long long maxNum)
-{
-    x = (x * 10007) % maxNum;
-    return x + 1;
-}
-void error()
-{
-    std::cout << "Error, mismatch found." << std::endl;
-    exit(0);
+
+void tester(void) {
+    //	test: constructor
+    sjtu::map<Integer, std::string, Compare> map;
+    //	test: empty(), size()
+    assert(map.empty() && map.size() == 0);
+    //	test: operator[], insert()
+    for (int i = 0; i < 100000; ++i) {
+        std::string string = "";
+        for (int number = i; number; number /= 10) {
+            char digit = '0' + number % 10;
+            string = digit + string;
+        }
+        if (i & 1) {
+            map[Integer(i)] = string;
+            auto result = map.insert(sjtu::pair<Integer, std::string>(Integer(i), string));
+            assert(!result.second);
+        } else {
+            auto result = map.insert(sjtu::pair<Integer, std::string>(Integer(i), string));
+            assert(result.second);
+        }
+    }
+    map.debug_check_tree();
+    //	test: count(), find(), erase()
+    for (int i = 0; i < 100000; ++i) {
+        if (i > 1896 && i <= 2016) {
+            continue;
+        }
+        assert(map.count(Integer(i)) == 1);
+        assert(map.find(Integer(i)) != map.end());
+        if(map.size()==98103)
+            int tt=1;
+        map.erase(map.find(Integer(i)));
+        map.debug_check_tree();
+    }
+    map.debug_check_tree();
+    //	test: constructor, operator=, clear();
+    for (int i = 0; i < (int)map.size(); ++i) {
+        sjtu::map<Integer, std::string, Compare> copy(map);
+        map.clear();
+        std::cout << map.size() << " " << copy.size() << " ";
+        map = copy;
+        copy.clear();
+        std::cout << map.size() << " " << copy.size() << " ";
+        copy = map;
+        map.clear();
+        std::cout << map.size() << " " << copy.size() << " ";
+        map = copy;
+        copy.clear();
+        std::cout << map.size() << " " << copy.size() << " ";
+    }
+    map.debug_check_tree();
+    std::cout << std::endl;
+    //	test: const_iterator, cbegin(), cend(), operator++, at()
+    sjtu::map<Integer, std::string, Compare>::const_iterator const_iterator;
+    const_iterator = map.cbegin();
+    while (const_iterator != map.cend()) {
+        const Integer integer(const_iterator->first);
+        const_iterator++;
+        std::cout << map.at(integer) << " ";
+    }
+    std::cout << std::endl;
+    //	test: iterator, operator--, operator->
+    sjtu::map<Integer, std::string, Compare>::iterator iterator;
+    iterator = map.end();
+    while (true) {
+        sjtu::map<Integer, std::string, Compare>::iterator peek = iterator;
+        if (peek == map.begin()) {
+            std::cout << std::endl;
+            break;
+        }
+        std::cout << (--iterator)->second << " ";
+    }
+    //	test: erase()
+    while (map.begin() != map.end()) {
+        map.erase(map.begin());
+    }
+    assert(map.empty() && map.size() == 0);
+    //	test: operator[]
+    for (int i = 0; i < 100000; ++i) {
+        std::cout << map[Integer(i)];
+    }
+    std::cout << map.size() << std::endl;
 }
 
-const size_t N = 10005LL;
-int main(){
-    srand(time(NULL));
-    puts("test start:");
-    {
-        std::cout << "Test 4 : Test for copy constructor and operator=...";
-        sjtu::deque<long long> *pInt;
-        pInt = new sjtu::deque<long long>;
-        for (long long i = 0; i < N; ++i) {
-            pInt -> push_back(i);
-        }
-        sjtu::deque<long long> &dInt = *pInt;
-        sjtu::deque<long long> dualInt(dInt);
-        sjtu::deque<long long> dualInt_oper;
-        dualInt_oper = dInt;
-        for (long long i = 0; i < N; ++i)
-        {
-            if (dualInt[i] != dInt[i] || dualInt_oper[i] != dInt[i])
-                error();
-        }
-        dualInt_oper = dualInt_oper;
-        delete pInt;
-        for (long long i = 0; i < N; ++i)
-        {
-            if (dualInt_oper[i] != dualInt[i])
-                error();
-        }
-        std::cout << "Correct." << std::endl;
-    }
-    std::cout<<sjtu::memcheck<<std::endl;
+int main(void) {
+    tester();
 }
