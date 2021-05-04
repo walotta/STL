@@ -327,7 +327,10 @@ namespace sjtu {
                 if(belongs->cnt==0)throw invalid_iterator();
                 if(target==belongs->root)throw invalid_iterator();
                 auto tem=*this;
-                target=target->next();
+                if(target==belongs->root->right_son)
+                    target=belongs->root;
+                else
+                    target=target->next();
                 return tem;
             }
             /**
@@ -336,7 +339,10 @@ namespace sjtu {
             iterator & operator++() {
                 if(belongs->cnt==0)throw invalid_iterator();
                 if(target==belongs->root)throw invalid_iterator();
-                target=target->next();
+                if(target==belongs->root->right_son)
+                    target=belongs->root;
+                else
+                    target=target->next();
                 return *this;
             }
             /**
@@ -412,13 +418,19 @@ namespace sjtu {
                 if(belongs->cnt==0)throw invalid_iterator();
                 if(target==belongs->root)throw invalid_iterator();
                 auto tem=*this;
-                target=target->next();
+                if(target==belongs->root->right_son)
+                    target=belongs->root;
+                else
+                    target=target->next();
                 return tem;
             }
             const_iterator & operator++() {
                 if(belongs->cnt==0)throw invalid_iterator();
                 if(target==belongs->root)throw invalid_iterator();
-                target=target->next();
+                if(target==belongs->root->right_son)
+                    target=belongs->root;
+                else
+                    target=target->next();
                 return *this;
             }
             const_iterator operator--(int) {
