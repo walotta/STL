@@ -145,6 +145,7 @@ namespace sjtu {
         }
         void DFS_delete(node* now)
         {
+            if(now==root)return;
             if(now->left_son!=nullptr)DFS_delete(now->left_son);
             if(now->right_son!=nullptr)DFS_delete(now->right_son);
             //if(now->isRight())now->father->right_son=nullptr;
@@ -290,6 +291,8 @@ namespace sjtu {
                 root->father=left_root->father;
                 root->father->father=root;
                 delete to_remove;
+                delete left_root;
+                delete right_root;
             }
         }
         inline void tree_remove(const Key& key)
