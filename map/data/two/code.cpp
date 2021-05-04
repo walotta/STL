@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <algorithm>
-#include "map.hpp"
+#include "../../map.hpp"
 
 using namespace std;
 
@@ -450,7 +450,7 @@ bool check11(){
 	try{
 		p = Q.at("cc");
 	}
-	catch(...) {OK++;}	
+	catch(...) {OK++;}
 	return OK == 4;
 }
 

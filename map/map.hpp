@@ -102,7 +102,7 @@ namespace sjtu {
             inline node* max_son()const
             {
                 node* it=const_cast<node*>(this);
-                while(it->right_son!=nullptr)it=it->left_son;
+                while(it->right_son!=nullptr)it=it->right_son;
                 return it;
             }
             inline node* next()const
@@ -187,10 +187,12 @@ namespace sjtu {
             if(other.root->father==other.root)
             {
                 cnt=other.cnt;
+                root->father=root;
                 return;
             }else
             {
                 root->father=new node;
+                root->father->father=root;
                 DFS_copy_tree(root->father,other.root->father);
                 root->left_son=root->father->min_son();
                 root->right_son=root->father->max_son();
@@ -210,7 +212,7 @@ namespace sjtu {
         }
         inline void merge_tree(node* left_root,node* right_root)
         {
-            left_root->father->splay();
+            left_root->father->max_son()->splay();
             left_root->father->right_son=right_root->father;
             right_root->father->father=left_root->father;
         }
@@ -277,7 +279,7 @@ namespace sjtu {
                 delete to_remove;
             }else
             {
-                root->father=to_remove;
+                //root->father=to_remove;
                 node* left_root=new node;
                 node* right_root=new node;
                 left_root->father=to_remove->left_son;
@@ -287,6 +289,7 @@ namespace sjtu {
                 merge_tree(left_root,right_root);
                 root->father=left_root->father;
                 root->father->father=root;
+                delete to_remove;
             }
         }
         inline void tree_remove(const Key& key)
@@ -321,6 +324,8 @@ namespace sjtu {
              * iter++
              */
             iterator operator++(int) {
+                if(belongs->cnt==0)throw invalid_iterator();
+                if(target==belongs->root)throw invalid_iterator();
                 auto tem=*this;
                 target=target->next();
                 return tem;
@@ -329,6 +334,8 @@ namespace sjtu {
              * ++iter
              */
             iterator & operator++() {
+                if(belongs->cnt==0)throw invalid_iterator();
+                if(target==belongs->root)throw invalid_iterator();
                 target=target->next();
                 return *this;
             }
@@ -336,15 +343,25 @@ namespace sjtu {
              * iter--
              */
             iterator operator--(int) {
+                if(belongs->cnt==0)throw invalid_iterator();
+                if(target==belongs->root->left_son)throw invalid_iterator();
                 auto tem=*this;
-                target=target->front();
+                if(target==belongs->root)
+                    target=belongs->root->right_son;
+                else
+                    target=target->front();
                 return tem;
             }
             /**
              * --iter
              */
             iterator & operator--() {
-                target=target->front();
+                if(belongs->cnt==0)throw invalid_iterator();
+                if(target==belongs->root->left_son)throw invalid_iterator();
+                if(target==belongs->root)
+                    target=belongs->root->right_son;
+                else
+                    target=target->front();
                 return *this;
             }
             /**
@@ -392,21 +409,35 @@ namespace sjtu {
             const_iterator(const const_iterator &other):target(other.target),belongs(other.belongs){}
             const_iterator(const iterator &other):target(other.target),belongs(other.belongs){}
             const_iterator operator++(int) {
+                if(belongs->cnt==0)throw invalid_iterator();
+                if(target==belongs->root)throw invalid_iterator();
                 auto tem=*this;
                 target=target->next();
                 return tem;
             }
             const_iterator & operator++() {
+                if(belongs->cnt==0)throw invalid_iterator();
+                if(target==belongs->root)throw invalid_iterator();
                 target=target->next();
                 return *this;
             }
             const_iterator operator--(int) {
+                if(belongs->cnt==0)throw invalid_iterator();
+                if(target==belongs->root->left_son)throw invalid_iterator();
                 auto tem=*this;
-                target=target->front();
+                if(target==belongs->root)
+                    target=belongs->root->right_son;
+                else
+                    target=target->front();
                 return tem;
             }
             const_iterator & operator--() {
-                target=target->front();
+                if(belongs->cnt==0)throw invalid_iterator();
+                if(target==belongs->root->left_son)throw invalid_iterator();
+                if(target==belongs->root)
+                    target=belongs->root->right_son;
+                else
+                    target=target->front();
                 return *this;
             }
             const value_type & operator*() const {
@@ -495,9 +526,11 @@ namespace sjtu {
          * return a iterator to the beginning
          */
         iterator begin() {
+            if(cnt==0)return iterator(root,this);
             return iterator(root->left_son,this);
         }
         const_iterator cbegin() const {
+            if(cnt==0)return const_iterator(root,this);
             return const_iterator(root->left_son,this);
         }
         /**
@@ -548,7 +581,7 @@ namespace sjtu {
          * throw if pos pointed to a bad element (pos == this->end() || pos points an element out of this)
          */
         void erase(iterator pos) {
-            if(pos==end())throw invalid_iterator();
+            if(pos==end()||pos.belongs!=this)throw invalid_iterator();
             remove_node(pos.target);
         }
         /**
@@ -582,11 +615,13 @@ namespace sjtu {
         int debug_dfs_check(node* now)
         {
             if(now->father==now&&cnt==0)return 0;
+            if(now->father==nullptr)return -1;
             auto it=now->value->first;
             int flag=0;
             if(now->right_son!=nullptr)
             {
                 if(small_key(now->right_son->value->first,it))return -1;
+                if(now->right_son->father!=now)return -1;
                 int tem=debug_dfs_check(now->right_son);
                 if(tem==-1)return -1;
                 flag+=tem;
@@ -594,6 +629,7 @@ namespace sjtu {
             if(now->left_son!=nullptr)
             {
                 if(small_key(it,now->left_son->value->first))return -1;
+                if(now->left_son->father!=now)return -1;
                 int tem=debug_dfs_check(now->left_son);
                 if(tem==-1)return -1;
                 flag+=tem;
@@ -601,9 +637,10 @@ namespace sjtu {
             return flag+1;
         }
     public:
-        void debug_check_tree()
+        void debug_check_tree(int id=-1)
         {
             printf("\n===== check for cnt = %d =====\n",cnt);
+            if(id!=-1)printf("id = %d\n",id);
             if(debug_dfs_check(root->father)==cnt)
                 printf("correct\n=======\n");
             else
