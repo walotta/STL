@@ -168,7 +168,7 @@ namespace sjtu {
                     now->left_son=new node;
                     now->left_son->father=now;
                     now->left_son->value=new value_type(key,T());
-                    if(root->left_son==now)root->left_son=now->left_son;
+                    //if(root->left_son==now)root->left_son=now->left_son;
                     return now->left_son;
                 }else return DFS_insert(key,now->left_son);
             }else
@@ -178,7 +178,7 @@ namespace sjtu {
                     now->right_son=new node;
                     now->right_son->father=now;
                     now->right_son->value=new value_type(key,T());
-                    if(root->right_son==now)root->right_son=now->right_son;
+                    //if(root->right_son==now)root->right_son=now->right_son;
                     return now->right_son;
                 }else return DFS_insert(key,now->right_son);
             }
@@ -247,7 +247,13 @@ namespace sjtu {
             }else
             {
                 node* ans=DFS_insert(key,root->father);
-                ans->splay();
+                if(cnt%10==0)ans->splay();
+                if(cnt%1800==0)
+                {
+                    root->left_son->splay();
+                    root->right_son->splay();
+                    ans->splay();
+                }
                 if(small_key(ans->value->first,root->left_son->value->first))root->left_son=ans;
                 if(small_key(root->right_son->value->first,ans->value->first))root->right_son=ans;
                 return ans;
